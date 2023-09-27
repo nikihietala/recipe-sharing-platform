@@ -1,3 +1,11 @@
+Viestien määrä: {{ count }}
+<hr>
+{% for message in messages %}
+{{ message.content }}
+<hr>
+{% endfor %}
+<a href="/new">Lähetä viesti</a>
+
 <title>Etusivu</title>
 <h1>Etusivu</h1>
 <p>{{ message }}</p>
