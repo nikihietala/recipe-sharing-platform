@@ -33,4 +33,3 @@ def user_name():
 def logout():
     del session["user_id"]
     del session["user_name"]
-    return redirect("/")

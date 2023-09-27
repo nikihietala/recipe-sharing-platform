@@ -15,4 +15,8 @@ Viestien määrä: {{ count }}
 {% endfor %}
 </ul>
 
-You are logged in as {{ username }}.
+{% if session.user_id %}
+You are logged in as {{ username }}. <a href="/logout">Logout</a>
+{% else %}
+<a href="/login">Login</a>
+{% endif %}

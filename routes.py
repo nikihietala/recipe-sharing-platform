@@ -27,6 +27,11 @@ def login():
     #after successful login, redirect to home page
     return redirect("/")
 
+@app.route("/logout")
+def logout():
+    users.logout()
+    return redirect("/")
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
@@ -35,14 +40,14 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         
-        #check that username is valid
+        #check that username is valid in length
         if len(username) < 3 or len(username) > 20:
             return render_template("error.html", message="Username must be between 3 and 20 characters long")
         
         password = request.form["password1"]
         check_password = request.form["password2"]
 
-        #check that password is valid
+        #check that password is valid in length
         if len(password) < 4 or len(password) > 20:
             return render_template("error.html", message="Password must be between 4 and 20 characters long")
 
