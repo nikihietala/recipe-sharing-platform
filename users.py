@@ -5,7 +5,6 @@ from db import db
 from sqlalchemy.sql import text
 
 def register(name, password):
-    # If the username does not exist, add the user to the database
     hash_value = generate_password_hash(password)
     try:
         sql = "INSERT INTO users (name, password) VALUES (:name, :password)"
