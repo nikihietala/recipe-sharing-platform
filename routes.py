@@ -7,10 +7,12 @@ import users
 
 @app.route("/")
 def index():
+    #if user is logged in, display username
+    username = users.user_name()
     words = ["apina", "banaani", "cembalo"]
     result = db.session.execute(text("SELECT content FROM messages"))
     messages = result.fetchall()
-    return render_template("index.html", message="Tervetuloa!", items=words, count=len(messages), messages=messages)
+    return render_template("index.html", message="Tervetuloa!", items=words, count=len(messages), messages=messages, username=username)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

@@ -1,4 +1,3 @@
-from flask import Flask
 from flask import redirect, render_template, request, session
 from os import getenv
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -25,4 +24,13 @@ def login(name, password):
     if not check_password_hash(user.password, password):
         return False
     session["user_id"] = user.id
+    session["user_name"] = name
     return True
+
+def user_name():
+    return session.get("user_name")
+
+def logout():
+    del session["user_id"]
+    del session["user_name"]
+    return redirect("/")
