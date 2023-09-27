@@ -6,11 +6,9 @@ from db import db
 from sqlalchemy.sql import text
 
 def register(name, password):
+    # If the username does not exist, add the user to the database
     hash_value = generate_password_hash(password)
     try:
-        #only insert username into database if the username is between 3 and 20 characters long
-        if len(name) < 3 or len(name) > 20:
-            return False
         sql = "INSERT INTO users (name, password) VALUES (:name, :password)"
         db.session.execute(text(sql), {"name":name, "password":hash_value})
         db.session.commit()
