@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+
 Viestien määrä: {{ count }}
 <hr>
 {% for message in messages %}
@@ -20,3 +23,5 @@ You are logged in as {{ username }}. <a href="/logout">Logout</a>
 {% else %}
 <a href="/login">Sign in</a>
 {% endif %}
+
+{% endblock %}
