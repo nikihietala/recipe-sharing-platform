@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if session.user_id %}
+    <p></p>
+    <a href="/new">Add new recipe</a>
+    <br><br>
+{% else %}
+    <p></p>
+    <a href="/login">Sign in to post a new recipe</a>
+    <br><br>
+{% endif %}
+
+<h1>Recipes</h1>
+{% if recipes|length == 0 %}
+    <p>No recipes has been posted yet.</p>
+{% endif %}
+{% for recipe in recipes %}
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h3 class="card-title">{{ recipe.description }}</h3>
+      <h5 class="card-text">{{ recipe.price }} €</h5>
+      <p class="card-text">
+        {% for _ in range(recipe.rating) %}
+            ★
+        {% endfor %}
+      <p class="card-text">Recipe by: {{ recipe.poster_name }}</p>
+    </p>
+      <a href="/recipes/{{ recipe.id }}" class="btn btn-primary">View</a>
+    </div>
+{% endfor %}
+
+
+{% endblock %}

@@ -14,6 +14,12 @@ def index():
     messages = result.fetchall()
     return render_template("index.html", message="Tervetuloa!", items=words, count=len(messages), messages=messages, username=username)
 
+@app.route("/recipes")
+def recipes():
+    result = db.session.execute(text("SELECT id, description, price, rating, poster_name FROM recipes"))
+    recipes = result.fetchall()
+    return render_template("recipes.html", recipes=recipes)
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
@@ -74,13 +80,6 @@ def send():
     db.session.commit()
     return redirect("/")
 
-@app.route("/page1")
-def page1():
-    return "Tämä on sivu 1"
-
-@app.route("/page2")
-def page2():
-    return "Tämä on sivu 2!!!!!"
 
 @app.route("/test")
 def test():
@@ -88,7 +87,3 @@ def test():
     for i in range(100):
         content += str(i + 1) + " "
     return content
-
-@app.route("/page/<int:id>")
-def page(id):
-    return "Tämä on sivu " + str(id)
