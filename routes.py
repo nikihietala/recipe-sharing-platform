@@ -7,7 +7,6 @@ import users
 
 @app.route("/")
 def index():
-    #if user is logged in, display username
     username = users.user_name()
     words = ["apina", "banaani", "cembalo"]
     result = db.session.execute(text("SELECT content FROM messages"))
@@ -30,7 +29,6 @@ def login():
     if not users.login(username, password):
         return render_template("error.html", message="Wrong username or password")
     
-    #after successful login, redirect to home page
     return redirect("/")
 
 @app.route("/logout")
@@ -71,6 +69,85 @@ def register():
 @app.route("/new")
 def new():
     return render_template("new.html")
+
+@app.route("/newrecipe", methods=["GET", "POST"])
+def newrecipe():
+
+    if request.method == "POST":
+        action = request.form.get("action")
+
+        if action == "addingredient":
+            ingredient = request.form["ingredient"]
+            if 'ingredients' not in session:
+                session['ingredients'] = []
+            session['ingredients'].append(ingredient)
+            session.modified = True
+            return render_template("newrecipe.html", ingredients=session['ingredients'])
+
+        elif action == "submitrecipe":
+            description = request.form["description"]
+            price = request.form["price"]
+            rating = request.form["rating"]
+            protein = request.form["protein"]
+            carbs = request.form["carbs"]
+            fat = request.form["fat"]
+            poster_name = users.user_name()
+            ingredients = session.get('ingredients', [])
+
+            # Store recipe in DB(recipes table)
+            sql = "INSERT INTO recipes (description, price, rating, protein, carbs, fat, poster_name) VALUES (:description, :price, :rating, :protein, :carbs, :fat, :poster_name) RETURNING id"
+            result = db.session.execute(text(sql), {"description": description, "price": price, "rating": rating, "protein": protein, "carbs": carbs, "fat": fat, "poster_name": poster_name})
+            db.session.commit()
+            recipe_id = result.fetchone()[0]
+
+            for ingredient_name in ingredients:
+                # Check if ingredient exists already in ingredients table
+                sql = "SELECT id FROM ingredients WHERE ingredient_name=:ingredient_name"
+                result = db.session.execute(text(sql), {"ingredient_name": ingredient_name}).fetchone()
+                
+                # Store ingredient ID in ingredient_id
+                if result:
+                    ingredient_id = result[0]
+                else:
+                    # Insert new ingredient into DB(ingredients table)
+                    sql = "INSERT INTO ingredients (ingredient_name) VALUES (:ingredient_name) RETURNING id"
+                    result = db.session.execute(text(sql), {"ingredient_name": ingredient_name})
+                    db.session.commit()
+                    ingredient_id = result.fetchone()[0]
+
+                # Insert relationship into recipe_ingredients table
+                sql = "INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (:recipe_id, :ingredient_id)"
+                db.session.execute(text(sql), {"recipe_id": recipe_id, "ingredient_id": ingredient_id})
+                db.session.commit()
+
+            # Clear ingredients session after recipe is submitted
+            session.pop('ingredients', None)
+
+            return redirect("/recipes")
+
+    session.setdefault('ingredients', [])
+    return render_template("newrecipe.html", ingredients=session['ingredients'])
+
+
+@app.route("/deleteingredient", methods=["POST"])
+def delete_ingredient():
+    ingredient_to_delete = request.form["ingredient_to_delete"]
+    if 'ingredients' in session:
+        session['ingredients'] = [i for i in session['ingredients'] if i != ingredient_to_delete]
+        session.modified = True
+    return redirect("/newrecipe")
+
+
+@app.route("/addingredient", methods=["POST"])
+def add_ingredient():
+    ingredient = request.form["ingredient"]
+    if 'ingredients' not in session:
+        session['ingredients'] = []
+
+    session['ingredients'].append(ingredient)
+    session.modified = True
+
+    return redirect("/newrecipe")
 
 @app.route("/send", methods=["POST"])
 def send():
