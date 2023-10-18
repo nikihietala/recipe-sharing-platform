@@ -10,13 +10,22 @@ CREATE TABLE recipes (
     description TEXT,
     price DECIMAL,
     rating INTEGER,
+    ingredients TEXT,
+    protein DECIMAL,
+    carbs DECIMAL,
+    fat DECIMAL,
     poster_name TEXT REFERENCES users(name)
 );
 
 CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,
-    ingredient_name TEXT,
-    recipe_id INTEGER REFERENCES recipes
+    ingredient_name TEXT UNIQUE
+);
+
+CREATE TABLE recipe_ingredients (
+    recipe_id INTEGER REFERENCES recipes(id),
+    ingredient_id INTEGER REFERENCES ingredients(id),
+    PRIMARY KEY(recipe_id, ingredient_id)
 );
 
 CREATE TABLE favorites (
