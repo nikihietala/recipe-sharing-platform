@@ -134,6 +134,15 @@ def newrecipe():
     session.setdefault('ingredients', [])
     return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
 
+@app.route("/recipes/<int:recipe_id>")
+def view_recipe(recipe_id):
+    recipe = cooking.get_recipe(recipe_id)
+    if not recipe:
+        return render_template("error.html", message="Recipe not found")
+    ingredients = cooking.get_ingredients(recipe_id)
+    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients)
+
+
 @app.route("/send", methods=["POST"])
 def send():
     content = request.form["content"]

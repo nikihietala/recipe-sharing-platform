@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>{{ recipe.description }}</h1>
+<br>
+<h5>Price: {{ recipe.price }} €</h5>
+<h5>Rating: 
+    {% for _ in range(recipe.rating) %}
+        ★
+    {% endfor %}
+</h5>
+<h5>Recipe by: {{ recipe.poster_name }}</h5>
+<h5>Ingredients:</h5>
+<ul>
+{% for ingredient in ingredients %}
+    <li>{{ ingredient }}</li>
+{% endfor %}
+</ul>
+<h5>Macros per 1 portion:</h5>
+<ul>
+    <li>Protein: {{ recipe.protein }} g</li>
+    <li>Carbs: {{ recipe.carbs }} g</li>
+    <li>Fat: {{ recipe.fat }} g</li>
+</ul>
+
+<h5>Comments:</h5>
+<ul>
+{% for comment in comments %}
+    <li><strong>{{ comment.poster_name }}</strong> ({{ comment.posted_at }}): {{ comment.content }}</li>
+{% endfor %}
+</ul>
+
+
+<a href= "/recipes">Go back to recipes</a>
+{% endblock %}
