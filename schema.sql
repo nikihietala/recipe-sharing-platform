@@ -36,8 +36,8 @@ CREATE TABLE favorites (
 
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
-    comment TEXT,
-    user_id INTEGER REFERENCES users,
-    recipe_id INTEGER REFERENCES recipes
-    comment_date DATE
+    content TEXT NOT NULL,
+    poster_name TEXT REFERENCES users(name),
+    recipe_id INTEGER REFERENCES recipes(id),
+    posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
