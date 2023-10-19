@@ -26,10 +26,15 @@
 <h5>Comments:</h5>
 <ul>
 {% for comment in comments %}
-    <li><strong>{{ comment.poster_name }}</strong> ({{ comment.posted_at }}): {{ comment.content }}</li>
+    <li><strong>{{ comment.poster_name }}</strong> - {{ comment.posted_at.strftime('%d/%m/%Y %H:%M' )}} - {{ comment.content }}</li>
 {% endfor %}
 </ul>
 
+<form action="{{ url_for('add_comment', recipe_id=recipe.id) }}" method="post">
+    <label for="content">Add a Comment:</label>
+    <textarea name="content" required></textarea>
+    <input type="submit" value="Post Comment">
+</form>
 
 <a href= "/recipes">Go back to recipes</a>
 {% endblock %}

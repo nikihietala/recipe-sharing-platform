@@ -29,6 +29,17 @@ def get_ingredients(recipe_id):
     ingredient_names = [row[0] for row in result]
     return ingredient_names
 
+def add_comment(recipe_id, content, poster_name):
+    sql = "INSERT INTO comments (recipe_id, content, poster_name) VALUES (:recipe_id, :content, :poster_name)"
+    db.session.execute(text(sql), {"recipe_id": recipe_id, "content": content, "poster_name": poster_name})
+    db.session.commit()
+
+def get_comments(recipe_id):
+    sql = "SELECT id, content, poster_name, posted_at FROM comments WHERE recipe_id=:recipe_id ORDER BY posted_at ASC"
+    result = db.session.execute(text(sql), {"recipe_id": recipe_id}).fetchall()
+    return result
+
+
 def add_recipe_ingredient_relationship(recipe_id, ingredient_id):
     sql = "INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (:recipe_id, :ingredient_id)"
     db.session.execute(text(sql), {"recipe_id": recipe_id, "ingredient_id": ingredient_id})

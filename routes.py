@@ -140,8 +140,15 @@ def view_recipe(recipe_id):
     if not recipe:
         return render_template("error.html", message="Recipe not found")
     ingredients = cooking.get_ingredients(recipe_id)
-    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients)
+    comments = cooking.get_comments(recipe_id)
+    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients, comments=comments)
 
+@app.route("/recipes/<int:recipe_id>/comment", methods=["POST"])
+def add_comment(recipe_id):
+    content = request.form["content"]
+    poster_name = users.user_name()
+    cooking.add_comment(recipe_id, content, poster_name)
+    return redirect("/recipes/" + str(recipe_id))
 
 @app.route("/send", methods=["POST"])
 def send():
