@@ -85,7 +85,7 @@ def newrecipe():
     if request.method == "POST":
         action = request.form.get("action")
 
-        # Add ingredient
+        # Add ingredient to session
         if action == "Add Ingredient":
             ingredient = request.form["ingredient"]
             if ingredient:
@@ -95,7 +95,7 @@ def newrecipe():
                 session.modified = True
             return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
 
-        # Delete ingredient
+        # Delete ingredient from session
         elif 'ingredient_to_delete' in request.form:
             ingredient_to_delete = request.form["ingredient_to_delete"]
             if 'ingredients' in session:
@@ -123,7 +123,7 @@ def newrecipe():
                 # If ingredient doesn't exist, add it to ingredients table
                 if ingredient_id is None:
                     ingredient_id = cooking.add_ingredient(ingredient_name)
-                    
+
                 cooking.add_recipe_ingredient_relationship(recipe_id, ingredient_id)
 
             # Clear ingredients session after recipe is submitted
