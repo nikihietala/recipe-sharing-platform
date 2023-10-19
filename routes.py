@@ -4,6 +4,7 @@ from os import getenv
 from db import db
 from sqlalchemy.sql import text
 import users
+import cooking
 
 @app.route("/")
 def index():
@@ -113,30 +114,17 @@ def newrecipe():
             ingredients = session.get('ingredients', [])
 
             # Store recipe in DB(recipes table)
-            sql = "INSERT INTO recipes (description, price, rating, protein, carbs, fat, poster_name) VALUES (:description, :price, :rating, :protein, :carbs, :fat, :poster_name) RETURNING id"
-            result = db.session.execute(text(sql), {"description": description, "price": price, "rating": rating, "protein": protein, "carbs": carbs, "fat": fat, "poster_name": poster_name})
-            db.session.commit()
-            recipe_id = result.fetchone()[0]
+            recipe_id = cooking.add_recipe(description, price, rating, protein, carbs, fat, poster_name)
 
             for ingredient_name in ingredients:
-                # Check if ingredient exists already in ingredients table
-                sql = "SELECT id FROM ingredients WHERE ingredient_name=:ingredient_name"
-                result = db.session.execute(text(sql), {"ingredient_name": ingredient_name}).fetchone()
-                
-                # Store ingredient ID in ingredient_id
-                if result:
-                    ingredient_id = result[0]
-                else:
-                    # Insert new ingredient into DB(ingredients table)
-                    sql = "INSERT INTO ingredients (ingredient_name) VALUES (:ingredient_name) RETURNING id"
-                    result = db.session.execute(text(sql), {"ingredient_name": ingredient_name})
-                    db.session.commit()
-                    ingredient_id = result.fetchone()[0]
+                #Check if ingredient exists in ingredients table
+                ingredient_id = cooking.check_if_ingredient_exists(ingredient_name)
 
-                # Insert relationship into recipe_ingredients table
-                sql = "INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (:recipe_id, :ingredient_id)"
-                db.session.execute(text(sql), {"recipe_id": recipe_id, "ingredient_id": ingredient_id})
-                db.session.commit()
+                # If ingredient doesn't exist, add it to ingredients table
+                if ingredient_id is None:
+                    ingredient_id = cooking.add_ingredient(ingredient_name)
+                    
+                cooking.add_recipe_ingredient_relationship(recipe_id, ingredient_id)
 
             # Clear ingredients session after recipe is submitted
             session.pop('ingredients', None)
