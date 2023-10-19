@@ -72,19 +72,37 @@ def new():
 
 @app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
+    form_data = {
+        'description': request.form.get('description', ''),
+        'price': request.form.get('price', ''),
+        'rating': request.form.get('rating', ''),
+        'protein': request.form.get('protein', ''),
+        'carbs': request.form.get('carbs', ''),
+        'fat': request.form.get('fat', ''),
+    }
 
     if request.method == "POST":
         action = request.form.get("action")
 
-        if action == "addingredient":
+        # Add ingredient
+        if action == "Add Ingredient":
             ingredient = request.form["ingredient"]
-            if 'ingredients' not in session:
-                session['ingredients'] = []
-            session['ingredients'].append(ingredient)
-            session.modified = True
-            return render_template("newrecipe.html", ingredients=session['ingredients'])
+            if ingredient:
+                if 'ingredients' not in session:
+                    session['ingredients'] = []
+                session['ingredients'].append(ingredient)
+                session.modified = True
+            return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
 
-        elif action == "submitrecipe":
+        # Delete ingredient
+        elif 'ingredient_to_delete' in request.form:
+            ingredient_to_delete = request.form["ingredient_to_delete"]
+            if 'ingredients' in session:
+                session['ingredients'] = [i for i in session['ingredients'] if i != ingredient_to_delete]
+                session.modified = True
+            return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
+
+        elif action == "Add recipe":
             description = request.form["description"]
             price = request.form["price"]
             rating = request.form["rating"]
@@ -126,28 +144,7 @@ def newrecipe():
             return redirect("/recipes")
 
     session.setdefault('ingredients', [])
-    return render_template("newrecipe.html", ingredients=session['ingredients'])
-
-
-@app.route("/deleteingredient", methods=["POST"])
-def delete_ingredient():
-    ingredient_to_delete = request.form["ingredient_to_delete"]
-    if 'ingredients' in session:
-        session['ingredients'] = [i for i in session['ingredients'] if i != ingredient_to_delete]
-        session.modified = True
-    return redirect("/newrecipe")
-
-
-@app.route("/addingredient", methods=["POST"])
-def add_ingredient():
-    ingredient = request.form["ingredient"]
-    if 'ingredients' not in session:
-        session['ingredients'] = []
-
-    session['ingredients'].append(ingredient)
-    session.modified = True
-
-    return redirect("/newrecipe")
+    return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
 
 @app.route("/send", methods=["POST"])
 def send():
