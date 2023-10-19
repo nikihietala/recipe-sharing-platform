@@ -1,22 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-Viestien määrä: {{ count }}
-<hr>
-{% for message in messages %}
-{{ message.content }}
-<hr>
-{% endfor %}
-<a href="/new">Lähetä viesti</a>
-
 <title>Etusivu</title>
 <h1>Etusivu</h1>
-<p>{{ message }}</p>
-<ul>
-{% for item in items %}
-<li> {{ item }}
-{% endfor %}
-</ul>
+
 
 {% if session.user_id %}
 You are logged in as {{ username }}. <a href="/logout">Logout</a>

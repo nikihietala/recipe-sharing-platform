@@ -8,11 +8,7 @@ import cooking
 
 @app.route("/")
 def index():
-    username = users.user_name()
-    words = ["apina", "banaani", "cembalo"]
-    result = db.session.execute(text("SELECT content FROM messages"))
-    messages = result.fetchall()
-    return render_template("index.html", message="Tervetuloa!", items=words, count=len(messages), messages=messages, username=username)
+    return render_template("index.html", username = users.user_name())
 
 @app.route("/recipes")
 def recipes():
@@ -66,10 +62,6 @@ def register():
 
     #after successful registration, redirect to login page
     return redirect("/login")
-
-@app.route("/new")
-def new():
-    return render_template("new.html")
 
 @app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
@@ -141,7 +133,7 @@ def view_recipe(recipe_id):
         return render_template("error.html", message="Recipe not found")
     ingredients = cooking.get_ingredients(recipe_id)
     comments = cooking.get_comments(recipe_id)
-    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients, comments=comments)
+    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients, comments=comments, count = len(comments))
 
 @app.route("/recipes/<int:recipe_id>/comment", methods=["POST"])
 def add_comment(recipe_id):
@@ -149,19 +141,3 @@ def add_comment(recipe_id):
     poster_name = users.user_name()
     cooking.add_comment(recipe_id, content, poster_name)
     return redirect("/recipes/" + str(recipe_id))
-
-@app.route("/send", methods=["POST"])
-def send():
-    content = request.form["content"]
-    sql = "INSERT INTO messages (content) VALUES (:content)"
-    db.session.execute(text(sql), {"content":content})
-    db.session.commit()
-    return redirect("/")
-
-
-@app.route("/test")
-def test():
-    content = ""
-    for i in range(100):
-        content += str(i + 1) + " "
-    return content

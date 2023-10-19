@@ -23,7 +23,8 @@
     <li>Fat: {{ recipe.fat }} g</li>
 </ul>
 
-<h5>Comments:</h5>
+<h5>Comments section:</h5> 
+Currently there is {{ count }} comments posted.<p></p>
 <ul>
 {% for comment in comments %}
     <li><strong>{{ comment.poster_name }}</strong> - {{ comment.posted_at.strftime('%d/%m/%Y %H:%M' )}} - {{ comment.content }}</li>
