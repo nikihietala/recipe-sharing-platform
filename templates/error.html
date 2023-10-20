@@ -1,1 +1,10 @@
-{{message}}
+{% extends "base.html" %}
+{% block content %}
+
+<h5> {{ message }} </h5>
+
+<a href="/recipes">Browse All Recipes</a>
+<br>
+<a href="/">Return to Home Page</a>
+
+{% endblock %}
