@@ -30,8 +30,9 @@ CREATE TABLE recipe_ingredients (
 
 CREATE TABLE favorites (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users,
-    recipe_id INTEGER REFERENCES recipes
+    user_id INTEGER REFERENCES users(id),
+    recipe_id INTEGER REFERENCES recipes(id),
+    UNIQUE(user_id, recipe_id)
 );
 
 CREATE TABLE comments (
