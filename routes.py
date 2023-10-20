@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, redirect, request, session
+from flask import render_template, redirect, request, session, flash
 from os import getenv
 from db import db
 from sqlalchemy.sql import text
@@ -150,6 +150,7 @@ def add_favorite(recipe_id):
     if cooking.check_if_favorite_exists(user_id, recipe_id):
         return render_template("error.html", message="This recipe is already in favorites")
     cooking.add_favorite(user_id, recipe_id)
+    flash("Recipe added to favorites!", "success")
     return redirect("/recipes")
 
 @app.route("/favorites")
