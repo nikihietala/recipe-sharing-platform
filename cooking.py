@@ -45,3 +45,17 @@ def add_recipe_ingredient_relationship(recipe_id, ingredient_id):
     db.session.execute(text(sql), {"recipe_id": recipe_id, "ingredient_id": ingredient_id})
     db.session.commit()
 
+def add_favorite(user_id, recipe_id):
+    sql = "INSERT INTO favorites (user_id, recipe_id) VALUES (:user_id, :recipe_id)"
+    db.session.execute(text(sql), {"user_id": user_id, "recipe_id": recipe_id})
+    db.session.commit()
+
+def check_if_favorite_exists(user_id, recipe_id):
+    sql = "SELECT id FROM favorites WHERE user_id=:user_id AND recipe_id=:recipe_id"
+    result = db.session.execute(text(sql), {"user_id": user_id, "recipe_id": recipe_id}).fetchone()
+    return result[0] if result else None
+
+def get_user_favorites(user_id):
+    sql = "SELECT recipes.* FROM recipes JOIN favorites ON recipes.id = favorites.recipe_id WHERE favorites.user_id=:user_id"
+    result = db.session.execute(text(sql), {"user_id": user_id}).fetchall()
+    return result

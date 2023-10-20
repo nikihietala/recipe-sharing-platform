@@ -138,6 +138,23 @@ def view_recipe(recipe_id):
 @app.route("/recipes/<int:recipe_id>/comment", methods=["POST"])
 def add_comment(recipe_id):
     content = request.form["content"]
-    poster_name = users.user_name()
+    poster_name = users.user_id()
     cooking.add_comment(recipe_id, content, poster_name)
     return redirect("/recipes/" + str(recipe_id))
+
+@app.route("/recipes/<int:recipe_id>/favorite", methods=["POST"])
+def add_favorite(recipe_id):
+    user_id = users.user_id()
+    if not user_id:
+        return render_template("error.html", message="You must be logged in to add a recipe to favorites")
+    if cooking.check_if_favorite_exists(user_id, recipe_id):
+        return render_template("error.html", message="This recipe is already in favorites")
+    cooking.add_favorite(user_id, recipe_id)
+    return redirect("/recipes")
+
+@app.route("/favorites")
+def view_favorites():
+    if not users.user_id():
+        return render_template("error.html", message="You must be logged in to view favorites")
+    favorite_recipes = cooking.get_user_favorites(users.user_id())
+    return render_template("favorites.html", favorite_recipes=favorite_recipes)

@@ -36,6 +36,10 @@ Currently there is {{ count }} comments posted.<p></p>
     <textarea name="content" required></textarea>
     <input type="submit" value="Post Comment">
 </form>
+<form action="{{ url_for('add_favorite', recipe_id=recipe.id) }}" method="post">
+    <label>Add to Favorites:</label>
+    <button type="submit">Add to Favorites</button>
+</form>
 
 <a href= "/recipes">Go back to recipes</a>
 {% endblock %}
