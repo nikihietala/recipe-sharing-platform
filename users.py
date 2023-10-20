@@ -29,6 +29,9 @@ def login(name, password):
 def user_name():
     return session.get("user_name")
 
+def user_id():
+    return session.get("user_id")
+
 def logout():
     del session["user_id"]
     del session["user_name"]
