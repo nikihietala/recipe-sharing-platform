@@ -18,16 +18,36 @@
 {% for recipe in recipes %}
 <div class="card" style="width: 18rem;">
     <div class="card-body">
-      <h3 class="card-title">{{ recipe.description }}</h3>
-      <h5 class="card-text">{{ recipe.price }} €</h5>
       <p class="card-text">
-        {% for _ in range(recipe.rating) %}
+        Average User Rating:
+        {% for _ in range(recipe.whole_stars) %}
             ★
         {% endfor %}
+        {% if recipe.half_star %}
+            ☆
+        {% endif %}
+    </p>
+    </div>
+      <h3 class="card-title">{{ recipe.description }}</h3>
+      <h5 class="card-text">{{ recipe.price }} €</h5>
       <p class="card-text">Recipe by: {{ recipe.poster_name }}</p>
     </p>
       <a href="/recipes/{{ recipe.id }}" class="btn btn-primary">View</a>
     </div>
+{% endfor %}
+
+{% for rating in recipe_ratings %}
+<p class="card-text">
+  {# Display full stars for whole numbers #}
+  {% for _ in range(recipe.average_rating|round(0, 'floor')) %}
+      ★
+  {% endfor %}
+  
+  {# Display half-star if there's a decimal #}
+  {% if recipe.average_rating|round(0, 'floor') < recipe.average_rating %}
+      ☆
+  {% endif %}
+</p>
 {% endfor %}
 
 

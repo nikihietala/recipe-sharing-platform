@@ -42,3 +42,11 @@ CREATE TABLE comments (
     recipe_id INTEGER REFERENCES recipes(id) ON DELETE CASCADE,
     posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE recipe_ratings (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    recipe_id INTEGER REFERENCES recipes(id),
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+    UNIQUE(user_id, recipe_id)
+);

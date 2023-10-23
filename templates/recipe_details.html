@@ -4,11 +4,6 @@
 <h1>{{ recipe.description }}</h1>
 <br>
 <h5>Price: {{ recipe.price }} €</h5>
-<h5>Rating: 
-    {% for _ in range(recipe.rating) %}
-        ★
-    {% endfor %}
-</h5>
 <h5>Recipe by: {{ recipe.poster_name }}</h5>
 <h5>Ingredients:</h5>
 <ul>
@@ -30,6 +25,17 @@ Currently there is {{ count }} comments posted.<p></p>
     <li><strong>{{ comment.poster_name }}</strong> - {{ comment.posted_at.strftime('%d/%m/%Y %H:%M' )}} - {{ comment.content }}</li>
 {% endfor %}
 </ul>
+<form action="{{ url_for('rate_recipe', recipe_id=recipe.id) }}" method="post">
+    <label>Rate this recipe:</label>
+    <select name="rating">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+    <input type="submit" value="Rate">
+</form>
 
 <form action="{{ url_for('add_comment', recipe_id=recipe.id) }}" method="post">
     <label for="content">Add a Comment:</label>

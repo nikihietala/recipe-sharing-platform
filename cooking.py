@@ -2,15 +2,20 @@ from db import db
 from sqlalchemy import text
 
 def add_recipe(description, price, rating, protein, carbs, fat, poster_name):
-    sql = "INSERT INTO recipes (description, price, rating, protein, carbs, fat, poster_name) VALUES (:description, :price, :rating, :protein, :carbs, :fat, :poster_name) RETURNING id"
-    result = db.session.execute(text(sql), {"description": description, "price": price, "rating": rating, "protein": protein, "carbs": carbs, "fat": fat, "poster_name": poster_name})
+    sql = "INSERT INTO recipes (description, price, protein, carbs, fat, poster_name) VALUES (:description, :price, :rating, :protein, :carbs, :fat, :poster_name) RETURNING id"
+    result = db.session.execute(text(sql), {"description": description, "price": price, "protein": protein, "carbs": carbs, "fat": fat, "poster_name": poster_name})
     db.session.commit()
     return result.fetchone()[0]
 
 def get_recipe(recipe_id):
-    sql = "SELECT id, description, price, rating, protein, carbs, fat, poster_name FROM recipes WHERE id=:recipe_id"
+    sql = "SELECT id, description, price, protein, carbs, fat, poster_name FROM recipes WHERE id=:recipe_id"
     result = db.session.execute(text(sql), {"recipe_id": recipe_id}).fetchone()
     return result
+
+def get_recipes():
+    sql = "SELECT r.id, r.description, r.price, r.poster_name, COALESCE((SELECT AVG(rating) FROM recipe_ratings rr WHERE r.id = rr.recipe_id), 0) AS average_rating FROM recipes r ORDER BY average_rating DESC"
+    results = db.session.execute(text(sql)).fetchall()
+    return results
 
 def delete_recipe(recipe_id):
     sql = "DELETE FROM recipes WHERE id=:recipe_id"
@@ -69,3 +74,20 @@ def delete_favorite(user_id, recipe_id):
     sql = "DELETE FROM favorites WHERE user_id=:user_id AND recipe_id=:recipe_id"
     db.session.execute(text(sql), {"user_id": user_id, "recipe_id": recipe_id})
     db.session.commit()
+
+def add_or_update_rating(user_id, recipe_id, rating):
+    sql = "SELECT id FROM recipe_ratings WHERE user_id=:user_id AND recipe_id=:recipe_id"
+    result = db.session.execute(text(sql), {"user_id": user_id, "recipe_id": recipe_id}).fetchone()
+
+    if result:
+        sql = "UPDATE recipe_ratings SET rating=:rating WHERE user_id=:user_id AND recipe_id=:recipe_id"
+    else:
+        sql = "INSERT INTO recipe_ratings (user_id, recipe_id, rating) VALUES (:user_id, :recipe_id, :rating)"
+    
+    db.session.execute(text(sql), {"user_id": user_id, "recipe_id": recipe_id, "rating": rating})
+    db.session.commit()
+
+def get_average_rating(recipe_id):
+    sql = "SELECT AVG(rating) FROM recipe_ratings WHERE recipe_id=:recipe_id"
+    result = db.session.execute(text(sql), {"recipe_id": recipe_id}).fetchone()
+    return round(result[0], 1) if result[0] else None

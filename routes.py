@@ -1,7 +1,6 @@
 from app import app
 from flask import render_template, redirect, request, session, flash
 from os import getenv
-from db import db
 from sqlalchemy.sql import text
 import users
 import cooking
@@ -11,9 +10,23 @@ def index():
     return render_template("index.html", username = users.user_name())
 
 @app.route("/recipes")
-def recipes():
-    result = db.session.execute(text("SELECT id, description, price, rating, poster_name FROM recipes"))
-    recipes = result.fetchall()
+def recipes(): 
+    recipes_raw = cooking.get_recipes()
+    recipes = []
+    for recipe in recipes_raw:
+        # convert recipes into a dictionary
+        recipe_dict = {
+            'id': recipe.id,
+            'description': recipe.description,
+            'price': recipe.price,
+            'poster_name': recipe.poster_name,
+            'average_rating': float(recipe.average_rating)
+        }
+        # convert average rating to whole number to be able to display stars
+        recipe_dict['whole_stars'] = int(recipe_dict['average_rating'])
+        # check if the remaining decimal is greater than or equal to 0.5 to be able to display a half star
+        recipe_dict['half_star'] = 1 if recipe_dict['average_rating'] - recipe_dict['whole_stars'] >= 0.5 else 0
+        recipes.append(recipe_dict)
     return render_template("recipes.html", recipes=recipes)
 
 @app.route("/login", methods=["GET", "POST"])
@@ -77,7 +90,7 @@ def newrecipe():
     if request.method == "POST":
         action = request.form.get("action")
 
-        # Add ingredient to session
+        # add ingredient to session
         if action == "Add Ingredient":
             ingredient = request.form["ingredient"]
             if ingredient:
@@ -87,7 +100,7 @@ def newrecipe():
                 session.modified = True
             return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
 
-        # Delete ingredient from session
+        # delete ingredient from session
         elif 'ingredient_to_delete' in request.form:
             ingredient_to_delete = request.form["ingredient_to_delete"]
             if 'ingredients' in session:
@@ -105,20 +118,20 @@ def newrecipe():
             poster_name = users.user_name()
             ingredients = session.get('ingredients', [])
 
-            # Store recipe in DB(recipes table)
+            # store recipe in DB(recipes table)
             recipe_id = cooking.add_recipe(description, price, rating, protein, carbs, fat, poster_name)
 
             for ingredient_name in ingredients:
-                #Check if ingredient exists in ingredients table
+                # check if ingredient exists in ingredients table
                 ingredient_id = cooking.check_if_ingredient_exists(ingredient_name)
 
-                # If ingredient doesn't exist, add it to ingredients table
+                # if ingredient doesn't exist, add it to ingredients table
                 if ingredient_id is None:
                     ingredient_id = cooking.add_ingredient(ingredient_name)
 
                 cooking.add_recipe_ingredient_relationship(recipe_id, ingredient_id)
 
-            # Clear ingredients session after recipe is submitted
+            # clear ingredients session after recipe is submitted
             session.pop('ingredients', None)
 
             return redirect("/recipes")
@@ -184,3 +197,15 @@ def delete_favorite(recipe_id):
     cooking.delete_favorite(user_id, recipe_id)
     flash("Recipe deleted from favorites!", "success")
     return redirect("/favorites")
+
+@app.route("/rate_recipe/<int:recipe_id>", methods=["POST"])
+def rate_recipe(recipe_id):
+    user_id = users.user_id()
+    if not user_id:
+        return render_template("error.html", message="You must be logged in to rate a recipe")
+    rating = request.form["rating"]
+    if not 1 <= int(rating) <= 5:
+        return render_template("error.html", message="Rating must be between 1 and 5")
+    cooking.add_or_update_rating(user_id, recipe_id, rating)
+    flash("Rating added!", "success")
+    return redirect("/recipes/" + str(recipe_id))
