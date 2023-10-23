@@ -41,5 +41,10 @@ Currently there is {{ count }} comments posted.<p></p>
     <button type="submit">Add to Favorites</button>
 </form>
 
+{% if recipe.poster_name == current_user %}
+    <form action="{{ url_for('delete_recipe', recipe_id=recipe.id) }}" method="post">
+        <input type="submit" value="Delete Recipe">
+    </form>
+{% endif %}
 <a href= "/recipes">Go back to recipes</a>
 {% endblock %}

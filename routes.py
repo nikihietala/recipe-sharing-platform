@@ -133,7 +133,23 @@ def view_recipe(recipe_id):
         return render_template("error.html", message="Recipe not found")
     ingredients = cooking.get_ingredients(recipe_id)
     comments = cooking.get_comments(recipe_id)
-    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients, comments=comments, count = len(comments))
+    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients, comments=comments, count = len(comments), current_user = users.user_name())
+
+@app.route("/recipes/<int:recipe_id>/delete", methods=["POST"])
+def delete_recipe(recipe_id):
+    if not users.user_id():
+        return render_template("error.html", message="You must be logged in to delete a recipe")
+    
+    recipe = cooking.get_recipe(recipe_id)
+    if not recipe:
+        return render_template("error.html", message="Recipe not found")
+    
+    if recipe.poster_name != users.user_name():
+        return render_template("error.html", message="You can only delete recipes you have posted")
+    
+    cooking.delete_recipe(recipe_id)
+    flash("Recipe deleted!", "success")
+    return redirect("/recipes")
 
 @app.route("/recipes/<int:recipe_id>/comment", methods=["POST"])
 def add_comment(recipe_id):

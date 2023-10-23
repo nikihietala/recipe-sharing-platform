@@ -12,6 +12,11 @@ def get_recipe(recipe_id):
     result = db.session.execute(text(sql), {"recipe_id": recipe_id}).fetchone()
     return result
 
+def delete_recipe(recipe_id):
+    sql = "DELETE FROM recipes WHERE id=:recipe_id"
+    db.session.execute(text(sql), {"recipe_id": recipe_id})
+    db.session.commit()
+
 def check_if_ingredient_exists(ingredient_name):
     sql = "SELECT id FROM ingredients WHERE ingredient_name=:ingredient_name"
     result = db.session.execute(text(sql), {"ingredient_name": ingredient_name}).fetchone()
