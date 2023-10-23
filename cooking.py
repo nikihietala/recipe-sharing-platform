@@ -110,3 +110,8 @@ def search_recipes(ingredient=None, max_price=None, min_price=None):
         params["min_price"] = min_price
 
     return db.session.execute(text(sql), params).fetchall()
+
+def get_user_recipes(user_name):
+    sql = "SELECT id, description, price, poster_name FROM recipes WHERE poster_name = :poster_name"
+    recipes = db.session.execute(text(sql), {"poster_name": user_name}).fetchall()
+    return recipes

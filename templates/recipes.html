@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="text-center">
 {% if session.user_id %}
     <p></p>
     <a href="/newrecipe">Add new recipe</a>
@@ -11,30 +12,40 @@
     <br><br>
 {% endif %}
 
-<h1>Recipes</h1>
 {% if recipes|length == 0 %}
     <p>No recipes has been posted yet.</p>
 {% endif %}
-{% for recipe in recipes %}
-<div class="card" style="width: 18rem;">
-    <div class="card-body">
-      <p class="card-text">
-        Average User Rating:
-        {% for _ in range(recipe.whole_stars) %}
-            ★
+</div>
+
+<div class="container">
+    <div class="row">
+        {% for recipe in recipes %}
+            <div class="col-10">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">
+                            {% if recipe.whole_stars == 0 and recipe.half_star == 0 %}
+                                No User Ratings
+                            {% else %}
+                                Average User Rating:
+                                {% for _ in range(recipe.whole_stars) %}
+                                    ★
+                                {% endfor %}
+                                {% if recipe.half_star %}
+                                    ☆
+                                {% endif %}
+                            {% endif %}
+                        </p>
+                        <h3 class="card-title">{{ recipe.description }}</h3>
+                        <h5 class="card-text">{{ recipe.price }} €</h5>
+                        <p class="card-text">Recipe by: {{ recipe.poster_name }}</p>
+                        <a href="/recipes/{{ recipe.id }}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-        {% if recipe.half_star %}
-            ☆
-        {% endif %}
-    </p>
     </div>
-      <h3 class="card-title">{{ recipe.description }}</h3>
-      <h5 class="card-text">{{ recipe.price }} €</h5>
-      <p class="card-text">Recipe by: {{ recipe.poster_name }}</p>
-    </p>
-      <a href="/recipes/{{ recipe.id }}" class="btn btn-primary">View</a>
-    </div>
-{% endfor %}
+</div>
 
 {% for rating in recipe_ratings %}
 <p class="card-text">

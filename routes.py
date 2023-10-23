@@ -223,3 +223,10 @@ def search_results():
     recipes = cooking.search_recipes(ingredient, max_price, min_price)
 
     return render_template("search.html", recipes=recipes, username = users.user_name())
+
+@app.route('/myrecipes')
+def my_recipes():
+    if not users.user_id():
+        return render_template("error.html", message="You must be logged in to view your recipes")
+    recipes = cooking.get_user_recipes(users.user_name())
+    return render_template('my_recipes.html', recipes=recipes, username = users.user_name())
