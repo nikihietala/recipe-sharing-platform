@@ -10,13 +10,14 @@
             <h2>{{ recipe.title }}</h2>
             <p>{{ recipe.description }}</p>
             <a href="{{ url_for('view_recipe', recipe_id=recipe.id) }}">View Details</a>
+            <form action="{{ url_for('delete_favorite', recipe_id=recipe.id) }}" method="post" class="inline-form">
+                <input type="submit" value="Remove from Favorites">
+            </form>
         </li>
     {% endfor %}
     </ul>
 {% else %}
     <p>You have no favorites.</p>
 {% endif %}
-
-<a href="/recipes">Browse All Recipes</a>
 
 {% endblock %}

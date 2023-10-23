@@ -138,7 +138,7 @@ def view_recipe(recipe_id):
 @app.route("/recipes/<int:recipe_id>/comment", methods=["POST"])
 def add_comment(recipe_id):
     content = request.form["content"]
-    poster_name = users.user_id()
+    poster_name = users.user_name()
     cooking.add_comment(recipe_id, content, poster_name)
     return redirect("/recipes/" + str(recipe_id))
 
@@ -159,3 +159,12 @@ def view_favorites():
         return render_template("error.html", message="You must be logged in to view favorites")
     favorite_recipes = cooking.get_user_favorites(users.user_id())
     return render_template("favorites.html", favorite_recipes=favorite_recipes)
+
+@app.route("/recipes/delete/<int:recipe_id>", methods=["POST"])
+def delete_favorite(recipe_id):
+    user_id = users.user_id()
+    if not user_id:
+        return render_template("error.html", message="You must be logged in to delete a recipe from favorites")
+    cooking.delete_favorite(user_id, recipe_id)
+    flash("Recipe deleted from favorites!", "success")
+    return redirect("/favorites")

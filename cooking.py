@@ -59,3 +59,8 @@ def get_user_favorites(user_id):
     sql = "SELECT recipes.* FROM recipes JOIN favorites ON recipes.id = favorites.recipe_id WHERE favorites.user_id=:user_id"
     result = db.session.execute(text(sql), {"user_id": user_id}).fetchall()
     return result
+
+def delete_favorite(user_id, recipe_id):
+    sql = "DELETE FROM favorites WHERE user_id=:user_id AND recipe_id=:recipe_id"
+    db.session.execute(text(sql), {"user_id": user_id, "recipe_id": recipe_id})
+    db.session.commit()
