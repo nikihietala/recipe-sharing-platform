@@ -27,7 +27,7 @@ def recipes():
         # check if the remaining decimal is greater than or equal to 0.5 to be able to display a half star
         recipe_dict['half_star'] = 1 if recipe_dict['average_rating'] - recipe_dict['whole_stars'] >= 0.5 else 0
         recipes.append(recipe_dict)
-    return render_template("recipes.html", recipes=recipes)
+    return render_template("recipes.html", recipes=recipes, username = users.user_name())
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -98,7 +98,7 @@ def newrecipe():
                     session['ingredients'] = []
                 session['ingredients'].append(ingredient)
                 session.modified = True
-            return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
+            return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data, username = users.user_name())
 
         # delete ingredient from session
         elif 'ingredient_to_delete' in request.form:
@@ -106,7 +106,7 @@ def newrecipe():
             if 'ingredients' in session:
                 session['ingredients'] = [i for i in session['ingredients'] if i != ingredient_to_delete]
                 session.modified = True
-            return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
+            return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data, username = users.user_name())
 
         elif action == "Add recipe":
             description = request.form["description"]
@@ -137,7 +137,7 @@ def newrecipe():
             return redirect("/recipes")
 
     session.setdefault('ingredients', [])
-    return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data)
+    return render_template("newrecipe.html", ingredients=session['ingredients'], form_data=form_data, username = users.user_name())
 
 @app.route("/recipes/<int:recipe_id>")
 def view_recipe(recipe_id):
@@ -146,7 +146,7 @@ def view_recipe(recipe_id):
         return render_template("error.html", message="Recipe not found")
     ingredients = cooking.get_ingredients(recipe_id)
     comments = cooking.get_comments(recipe_id)
-    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients, comments=comments, count = len(comments), current_user = users.user_name())
+    return render_template("recipe_details.html", recipe=recipe, ingredients=ingredients, comments=comments, count = len(comments), current_user = users.user_name(), username = users.user_name())
 
 @app.route("/recipes/<int:recipe_id>/delete", methods=["POST"])
 def delete_recipe(recipe_id):
@@ -187,7 +187,7 @@ def view_favorites():
     if not users.user_id():
         return render_template("error.html", message="You must be logged in to view favorites")
     favorite_recipes = cooking.get_user_favorites(users.user_id())
-    return render_template("favorites.html", favorite_recipes=favorite_recipes)
+    return render_template("favorites.html", favorite_recipes=favorite_recipes, username = users.user_name())
 
 @app.route("/recipes/delete/<int:recipe_id>", methods=["POST"])
 def delete_favorite(recipe_id):
@@ -212,7 +212,7 @@ def rate_recipe(recipe_id):
 
 @app.route("/search")
 def search():
-    return render_template("search.html")
+    return render_template("search.html", username = users.user_name())
 
 @app.route("/search_results")
 def search_results():
@@ -222,4 +222,4 @@ def search_results():
 
     recipes = cooking.search_recipes(ingredient, max_price, min_price)
 
-    return render_template("search.html", recipes=recipes)
+    return render_template("search.html", recipes=recipes, username = users.user_name())
