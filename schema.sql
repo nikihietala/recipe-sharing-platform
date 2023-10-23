@@ -1,16 +1,13 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE,
-    password TEXT,
-    role INTEGER
+    password TEXT
 );
 
 CREATE TABLE recipes (
     id SERIAL PRIMARY KEY,
     description TEXT,
     price DECIMAL,
-    rating INTEGER,
-    ingredients TEXT,
     protein DECIMAL,
     carbs DECIMAL,
     fat DECIMAL,
@@ -46,7 +43,7 @@ CREATE TABLE comments (
 CREATE TABLE recipe_ratings (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    recipe_id INTEGER REFERENCES recipes(id),
+    recipe_id INTEGER REFERENCES recipes(id) ON DELETE CASCADE,
     rating INTEGER CHECK (rating >= 1 AND rating <= 5),
     UNIQUE(user_id, recipe_id)
 );
