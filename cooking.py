@@ -91,3 +91,22 @@ def get_average_rating(recipe_id):
     sql = "SELECT AVG(rating) FROM recipe_ratings WHERE recipe_id=:recipe_id"
     result = db.session.execute(text(sql), {"recipe_id": recipe_id}).fetchone()
     return round(result[0], 1) if result[0] else None
+
+def search_recipes(ingredient=None, max_price=None, min_price=None):
+    sql = "SELECT id, description, price, poster_name FROM recipes WHERE 1=1"
+    # add parameters to make sure SQL injection is not possible
+    params = {}
+
+    if ingredient:
+        sql += " AND EXISTS (SELECT 1 FROM recipe_ingredients ri JOIN ingredients i ON ri.ingredient_id = i.id WHERE ri.recipe_id = recipes.id AND LOWER(i.ingredient_name) = LOWER(:ingredient))"
+        params["ingredient"] = ingredient.strip()
+    
+    if max_price:
+        sql += " AND price <= :max_price"
+        params["max_price"] = max_price
+    
+    if min_price:
+        sql += " AND price >= :min_price"
+        params["min_price"] = min_price
+
+    return db.session.execute(text(sql), params).fetchall()

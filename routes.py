@@ -209,3 +209,17 @@ def rate_recipe(recipe_id):
     cooking.add_or_update_rating(user_id, recipe_id, rating)
     flash("Rating added!", "success")
     return redirect("/recipes/" + str(recipe_id))
+
+@app.route("/search")
+def search():
+    return render_template("search.html")
+
+@app.route("/search_results")
+def search_results():
+    ingredient = request.args.get('ingredient', None)
+    max_price = request.args.get('max_price', None)
+    min_price = request.args.get('min_price', None)
+
+    recipes = cooking.search_recipes(ingredient, max_price, min_price)
+
+    return render_template("search.html", recipes=recipes)
