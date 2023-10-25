@@ -1,10 +1,7 @@
 {% extends "base.html" %}
+{% block body_class %}login-page{% endblock %}
 {% block content %}
-
-<h5> {{ message }} </h5>
-
-<a href="/recipes">Browse All Recipes</a>
-<br>
-<a href="/">Return to Home Page</a>
-
+<div class="login-container">
+<h1>Sorry, there has been the following error. ({{ message }}). Please navigate back.<br></h1><br>
+</div>
 {% endblock %}

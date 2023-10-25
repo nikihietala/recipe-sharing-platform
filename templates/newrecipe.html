@@ -1,37 +1,42 @@
 {% extends "base.html" %}
+{% block body_class %}body-my-recipes{% endblock %}
 {% block content %}
 
-<p></p>
-<a href="/recipes">Go back to recipes</a>
-<br><br>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 bg-white p-4 rounded">
+            <form action="/newrecipe" method="post">
+                Name or description of the recipe: <br>
+                <input type="text" name="description" maxlength="200" value="{{ form_data.description }}"><br><br>
+                Price € (estimate price per 1 portion): <br>
+                <input type="number" step="0.1" min="0" max="100" name="price" value="{{ form_data.price }}"> <br><br>
+                Ingredient (only ingredient name, not amount): <input type="text" name="ingredient">
+                <input type="submit" name="action" value="Add Ingredient">
 
-<form action="/newrecipe" method="post">
-    Name or description of the recipe: <br>
-    <input type="text" name="description" maxlength="200" value="{{ form_data.description }}"><br><br>
-    Price € (estimate price per 1 portion): <br>
-    <input type="number" step="0.1" min="0" max="100" name="price" value="{{ form_data.price }}"> <br><br>
-    Ingredient: <input type="text" name="ingredient">
-    <input type="submit" name="action" value="Add Ingredient">
+                <h5>Current Ingredients:</h5>
+                <ul>
+                {% for ingredient in ingredients %}
+                    <li>
+                        {{ ingredient }}
+                        <button type="submit" name="ingredient_to_delete" value="{{ ingredient }}">Delete</button>
+                    </li>
+                {% endfor %}
+                </ul>
 
-    <h5>Current Ingredients:</h5>
-    <ul>
-    {% for ingredient in ingredients %}
-        <li>
-            {{ ingredient }}
-            <button type="submit" name="ingredient_to_delete" value="{{ ingredient }}">Delete</button>
-        </li>
-    {% endfor %}
-    </ul>
+                Estimation of macros per 1 portion: <br>
+                <input type="number" step="0.1" min="0" max="100" name="protein" value="{{ form_data.protein }}"> Protein (g) <br>
+                <input type="number" step="0.1" min="0" max="100" name="carbs" value="{{ form_data.carbs }}"> Carbs (g) <br>
+                <input type="number" step="0.1" min="0" max="100" name="fat" value="{{ form_data.fat }}"> Fat (g) <br>
+                <br>
 
-    Estimation of macros per 1 portion: <br>
-    <input type="number" step="0.1" min="0" max="100" name="protein" value="{{ form_data.protein }}"> Protein (g) <br>
-    <input type="number" step="0.1" min="0" max="100" name="carbs" value="{{ form_data.carbs }}"> Carbs (g) <br>
-    <input type="number" step="0.1" min="0" max="100" name="fat" value="{{ form_data.fat }}"> Fat (g) <br>
-    <br>
-
-
-    <input type="submit" name="action" value="Add recipe">
-
-</form>
+                <input type="submit" name="action" value="Add recipe">
+            </form>
+        <br>
+        <a href="/recipes">Go back to recipes</a>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
+
+

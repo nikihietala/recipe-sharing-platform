@@ -1,20 +1,21 @@
 {% extends "base.html" %}
+{% block body_class %}body-my-recipes{% endblock %}
 {% block content %}
 
-<h1>Your Recipes</h1>
-
-{% if recipes %}
-    <ul>
-    {% for recipe in recipes %}
-        <li>
-            <h5>{{ recipe.description }}</h5>
-            <a href="{{ url_for('view_recipe', recipe_id=recipe.id) }}">View Details</a>
-        </li>
-    {% endfor %}
-    </ul>
-You can delete your own recipe in the recipe details page ("View Details").
-{% else %}
-    <p>You haven't posted any recipes yet.</p>
-{% endif %}
-
+<div class="favorites-container">
+    <h1>Your Recipes</h1>
+    {% if recipes %}
+        <ul>
+        {% for recipe in recipes %}
+            <li>
+                {{ recipe.description }}
+                <a href="{{ url_for('view_recipe', recipe_id=recipe.id) }}">View Details</a>
+            </li>
+        {% endfor %}
+        </ul>
+    You can delete your own recipe in the recipe details page ("View Details").
+    {% else %}
+        <p>You haven't posted any recipes yet.</p>
+    {% endif %}
+</div>
 {% endblock %}

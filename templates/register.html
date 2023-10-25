@@ -1,15 +1,14 @@
 {% extends "base.html" %}
+{% block body_class %}login-page{% endblock %}
 {% block content %}
-<h1>Register</h1>
-
-<form action="/register" method="post">
-    Username: <br><input type="text" name="username" minlength="3" maxlength="20"><br>
-    Password: <br><input type="password" name="password1"><br> 
-    Password again: <br><input type="password" name="password2">
-    <p>
-    <input type="submit" value="Register">
-</form>
-
-If you already have an account, you can <a href="/login">login here</a>.
-
+<div class="login-container">
+    <form action="/register" method="post">
+        Username: <br><input type="text" name="username" minlength="3" maxlength="20"><br>
+        Password: <br><input type="password" name="password1"><br> 
+        Password again: <br><input type="password" name="password2">
+        <p>
+        <input type="submit" value="Register">
+        <p>If you already have an account, you can <a href="/login">login here</a>.</p>
+    </form>
+</div>
 {% endblock %}

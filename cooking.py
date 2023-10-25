@@ -97,6 +97,7 @@ def search_recipes(ingredient=None, max_price=None, min_price=None):
     # add parameters to make sure SQL injection is not possible
     params = {}
 
+    # search by ingredient name with exact match only (case insensitive)
     if ingredient:
         sql += " AND EXISTS (SELECT 1 FROM recipe_ingredients ri JOIN ingredients i ON ri.ingredient_id = i.id WHERE ri.recipe_id = recipes.id AND LOWER(i.ingredient_name) = LOWER(:ingredient))"
         params["ingredient"] = ingredient.strip()

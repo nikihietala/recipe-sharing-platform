@@ -93,6 +93,11 @@ def newrecipe():
         # add ingredient to session
         if action == "Add Ingredient":
             ingredient = request.form["ingredient"]
+            
+            # Check if ingredient contains only letters and spaces
+            if not ingredient.replace(' ', '').isalpha():
+                flash('Only letters are allowed for ingredients. No numbers or special characters.', 'error')
+                return render_template("newrecipe.html", ingredients=session.get('ingredients', []), form_data=form_data, username=users.user_name())
             if ingredient:
                 if 'ingredients' not in session:
                     session['ingredients'] = []

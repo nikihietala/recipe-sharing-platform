@@ -1,27 +1,24 @@
 {% extends "base.html" %}
+{% block body_class %}body-recipes{% endblock %}
 {% block content %}
 
-<div class="text-center">
+<div class="text-center bg-white py-3">
 {% if session.user_id %}
-    <p></p>
     <a href="/newrecipe">Add new recipe</a>
-    <br><br>
 {% else %}
-    <p></p>
     <a href="/login">Sign in to post a new recipe</a>
-    <br><br>
 {% endif %}
 
 {% if recipes|length == 0 %}
-    <p>No recipes has been posted yet.</p>
+    <p>No recipes have been posted yet.</p>
 {% endif %}
 </div>
 
 <div class="container">
     <div class="row">
         {% for recipe in recipes %}
-            <div class="col-10">
-                <div class="card">
+            <div class="col-12 centered-card-container">
+                <div class="card text-center">
                     <div class="card-body">
                         <p class="card-text">
                             {% if recipe.whole_stars == 0 and recipe.half_star == 0 %}
@@ -61,5 +58,5 @@
 </p>
 {% endfor %}
 
-
 {% endblock %}
+

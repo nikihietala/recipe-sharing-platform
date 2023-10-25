@@ -1,56 +1,73 @@
 {% extends "base.html" %}
+{% block body_class %}body-main{% endblock %}
 {% block content %}
+<div class="recipe-container">
+    <h1>{{ recipe.description }}</h1>
+    <div class="recipe-meta">
+        <h5>Recipe by: {{ recipe.poster_name }}</h5>
+        <h5>Price: {{ recipe.price }} €</h5>
+    </div>
 
-<h1>{{ recipe.description }}</h1>
-<br>
-<h5>Recipe by: {{ recipe.poster_name }}</h5><br>
-<h5>Price: {{ recipe.price }} €</h5>
-<h5>Ingredients:</h5>
-<ul>
-{% for ingredient in ingredients %}
-    <li>{{ ingredient }}</li>
-{% endfor %}
-</ul>
-<h5>Macros per 1 portion:</h5>
-<ul>
-    <li>Protein: {{ recipe.protein }} g</li>
-    <li>Carbs: {{ recipe.carbs }} g</li>
-    <li>Fat: {{ recipe.fat }} g</li>
-</ul>
+    <section class="recipe-details">
+        <div class="ingredients">
+            <h5>Ingredients:</h5>
+            <ul>
+                {% for ingredient in ingredients %}
+                    <li>{{ ingredient }}</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-<h5>Comments section (you can write cooking instructions etc here):</h5> 
-Currently there is {{ count }} comments posted.<p></p>
-<ul>
-{% for comment in comments %}
-    <li><strong>{{ comment.poster_name }}</strong> - {{ comment.posted_at.strftime('%d/%m/%Y %H:%M' )}} - {{ comment.content }}</li>
-{% endfor %}
-</ul>
+        <div class="macros">
+            <h5>Macros per 1 portion:</h5>
+            <ul>
+                <li>Protein: {{ recipe.protein }} g</li>
+                <li>Carbs: {{ recipe.carbs }} g</li>
+                <li>Fat: {{ recipe.fat }} g</li>
+            </ul>
+        </div>
+    </section>
 
-<form action="{{ url_for('add_comment', recipe_id=recipe.id) }}" method="post">
-    <label for="content">Add a Comment:</label>
-    <textarea name="content" required></textarea>
-    <input type="submit" value="Post Comment">
-</form>
-<form action="{{ url_for('add_favorite', recipe_id=recipe.id) }}" method="post">
-    <label>Add to Favorites:</label>
-    <button type="submit">Add to Favorites</button>
-</form>
-<form action="{{ url_for('rate_recipe', recipe_id=recipe.id) }}" method="post">
-    <label>Rate this recipe:</label>
-    <select name="rating">
-        <option value="1">★</option>
-        <option value="2">★★</option>
-        <option value="3">★★★</option>
-        <option value="4">★★★★</option>
-        <option value="5">★★★★★</option>
-    </select>
-    <input type="submit" value="Rate">
-</form>
+    <section class="comments-section">
+        <h5>Comments section (you can e.g., write cooking instructions, ask questions, comment about the recipe):</h5>
+        <ul>
+            {% for comment in comments %}
+                <li><strong>{{ comment.poster_name }}</strong> - {{ comment.posted_at.strftime('%d/%m/%Y %H:%M' )}} - {{ comment.content }}</li>
+            {% endfor %}
+        </ul>
+        <form action="{{ url_for('add_comment', recipe_id=recipe.id) }}" method="post">
+            <p>Currently there is {{ count }} comments posted.</p>
+            <label for="content"><h3>Add a Comment:</h3></label>
+            <textarea name="content" class="comment-textarea" wrap="soft" required></textarea>
+            <input type="submit" value="Post Comment">
+        </form>
+    </section>
 
-{% if recipe.poster_name == current_user %}
-    <form action="{{ url_for('delete_recipe', recipe_id=recipe.id) }}" method="post">
-        <input type="submit" value="Delete Recipe">
-    </form>
-{% endif %}
-<a href= "/recipes">Go back to recipes</a>
+    <br>
+    <div class="recipe-actions">
+        <form action="{{ url_for('add_favorite', recipe_id=recipe.id) }}" method="post">
+            <label>Add to Favorites:</label>
+            <button type="submit">Add to Favorites</button>
+        </form>
+        <form action="{{ url_for('rate_recipe', recipe_id=recipe.id) }}" method="post">
+            <label>Rate this recipe:</label>
+            <select name="rating">
+                <option value="1">★</option>
+                <option value="2">★★</option>
+                <option value="3">★★★</option>
+                <option value="4">★★★★</option>
+                <option value="5">★★★★★</option>
+            </select>
+            <input type="submit" value="Rate">
+        </form>
+    </div>
+    <br>
+    {% if recipe.poster_name == current_user %}
+        <form action="{{ url_for('delete_recipe', recipe_id=recipe.id) }}" method="post">
+            <input type="submit" value="Delete Recipe">
+        </form>
+    {% endif %}
+    
+    <br><a href="/recipes">Go back to recipes</a>
+</div>
 {% endblock %}
