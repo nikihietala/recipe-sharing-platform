@@ -1,16 +1,18 @@
-{% extends "base.html" %}
-{% block body_class %}login-page{% endblock %}
-{% block content %}
+{% extends "base.html" %} {% block body_class %}login-page{% endblock %} {%
+block content %}
 <div class="login-container">
-        <form action="/login" method="post">
-            Username: <br>
-            <input type="text" name="username"> <br>
-            Password: <br>
-            <input type="password" name="password"> 
-            <p>
-            <input type="submit" value="Sign in">
-            <p>If you do not have an account yet, <a href="/register">register here</a>.</p>
-        </form>
+  <form action="/login" method="post">
+    Username: <br />
+    <input type="text" name="username" /> <br />
+    Password: <br />
+    <input type="password" name="password" />
+    <p>
+      <input type="submit" value="Sign in" />
+    </p>
+
+    <p>
+      If you do not have an account yet, <a href="/register">register here</a>.
+    </p>
+  </form>
 </div>
 {% endblock %}
-

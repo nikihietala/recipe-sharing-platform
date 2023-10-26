@@ -1,43 +1,55 @@
-{% extends "base.html" %}
-{% block body_class %}body-search{% endblock %}
-{% block content %}
+{% extends "base.html" %} {% block body_class %}body-search{% endblock %} {%
+block content %}
 
 <div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="bg-white p-4 rounded">
-        <form action="{{ url_for('search_results') }}" method="get">
-            <div>
-                <label>Search by Ingredient (optional):</label>
-                <input type="text" name="ingredient">
-            </div>
-            
-            <div>
-                <label>Max Price € (optional):</label>
-                <input type="number" name="max_price" min="0" step="0.1" class="price-input">
-            </div>
-            
-            <div>
-                <label>Min Price € (optional):</label>
-                <input type="number" name="min_price" min="0" step="0.1" class="price-input">
-            </div>
-            
-            <input type="submit" value="Search">
-        </form>
+  <div class="bg-white p-4 rounded">
+    <form action="{{ url_for('search_results') }}" method="get">
+      <div>
+        <label>Search by Ingredient (optional):</label>
+        <input type="text" name="ingredient" />
+      </div>
 
-        <h1>Search Results</h1>
+      <div>
+        <label>Max Price € (optional):</label>
+        <input
+          type="number"
+          name="max_price"
+          min="0"
+          step="0.1"
+          class="price-input"
+        />
+      </div>
 
-        {% if recipes|length == 0 %}
-            <p>No recipes found based on the criteria.</p>
-        {% else %}
-            <ul>
-            {% for recipe in recipes %}
-                <li>
-                    {{ recipe.description }} - {{ recipe.price }} € - Recipe by: {{ recipe.poster_name }}
-                    <a href="/recipes/{{ recipe.id }}">View Recipe</a>
-                </li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
+      <div>
+        <label>Min Price € (optional):</label>
+        <input
+          type="number"
+          name="min_price"
+          min="0"
+          step="0.1"
+          class="price-input"
+        />
+      </div>
+
+      <input type="submit" value="Search" />
+    </form>
+
+    <h1>Search Results</h1>
+
+    {% if recipes|length == 0 %}
+    <p>No recipes found based on the criteria.</p>
+    {% else %}
+    <ul>
+      {% for recipe in recipes %}
+      <li>
+        {{ recipe.description }} - {{ recipe.price }} € - Recipe by: {{
+        recipe.poster_name }}
+        <a href="/recipes/{{ recipe.id }}">View Recipe</a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
 </div>
 
 {% endblock %}

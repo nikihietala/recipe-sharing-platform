@@ -1,62 +1,44 @@
-{% extends "base.html" %}
-{% block body_class %}body-recipes{% endblock %}
-{% block content %}
+{% extends "base.html" %} {% block body_class %}body-recipes{% endblock %} {%
+block content %}
 
 <div class="text-center bg-white py-3">
-{% if session.user_id %}
-    <a href="/newrecipe">Add new recipe</a>
-{% else %}
-    <a href="/login">Sign in to post a new recipe</a>
-{% endif %}
-
-{% if recipes|length == 0 %}
-    <p>No recipes have been posted yet.</p>
-{% endif %}
+  {% if session.user_id %}
+  <a href="/newrecipe">Add new recipe</a>
+  {% else %}
+  <a href="/login">Sign in to post a new recipe</a>
+  {% endif %} {% if recipes|length == 0 %}
+  <p>No recipes have been posted yet.</p>
+  {% endif %}
 </div>
 
 <div class="container">
-    <div class="row">
-        {% for recipe in recipes %}
-            <div class="col-12 centered-card-container">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <p class="card-text">
-                            {% if recipe.whole_stars == 0 and recipe.half_star == 0 %}
-                                No User Ratings
-                            {% else %}
-                                Average User Rating:
-                                {% for _ in range(recipe.whole_stars) %}
-                                    ★
-                                {% endfor %}
-                                {% if recipe.half_star %}
-                                    ☆
-                                {% endif %}
-                            {% endif %}
-                        </p>
-                        <h3 class="card-title">{{ recipe.description }}</h3>
-                        <h5 class="card-text">{{ recipe.price }} €</h5>
-                        <p class="card-text">Recipe by: {{ recipe.poster_name }}</p>
-                        <a href="/recipes/{{ recipe.id }}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
+  <div class="row">
+    {% for recipe in recipes %}
+    <div class="col-12 centered-card-container">
+      <div class="card text-center">
+        <div class="card-body">
+          <p class="card-text">
+            {% if recipe.whole_stars == 0 and recipe.half_star == 0 %} No User
+            Ratings {% else %} Average User Rating: {% for _ in
+            range(recipe.whole_stars) %} ★ {% endfor %} {% if recipe.half_star
+            %} ☆ {% endif %} {% endif %}
+          </p>
+          <h3 class="card-title">{{ recipe.description }}</h3>
+          <h5 class="card-text">{{ recipe.price }} €</h5>
+          <p class="card-text">Recipe by: {{ recipe.poster_name }}</p>
+          <a href="/recipes/{{ recipe.id }}" class="btn btn-primary">View</a>
+        </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
 </div>
 
 {% for rating in recipe_ratings %}
 <p class="card-text">
-  {# Display full stars for whole numbers #}
-  {% for _ in range(recipe.average_rating|round(0, 'floor')) %}
-      ★
-  {% endfor %}
-  
-  {# Display half-star if there's a decimal #}
-  {% if recipe.average_rating|round(0, 'floor') < recipe.average_rating %}
-      ☆
-  {% endif %}
+  {# Display full stars for whole numbers #} {% for _ in
+  range(recipe.average_rating|round(0, 'floor')) %} ★ {% endfor %} {# Display
+  half-star if there's a decimal #} {% if recipe.average_rating|round(0,
+  'floor') < recipe.average_rating %} ☆ {% endif %}
 </p>
-{% endfor %}
-
-{% endblock %}
-
+{% endfor %} {% endblock %}

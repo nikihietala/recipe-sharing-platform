@@ -38,7 +38,7 @@
         <form action="{{ url_for('add_comment', recipe_id=recipe.id) }}" method="post">
             <p>Currently there is {{ count }} comments posted.</p>
             <label for="content"><h3>Add a Comment:</h3></label>
-            <textarea name="content" class="comment-textarea" wrap="soft" required></textarea>
+            <textarea name="content" class="comment-textarea" wrap="soft" maxlength = "500" required></textarea>
             <input type="submit" value="Post Comment">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
