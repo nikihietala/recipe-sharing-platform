@@ -52,6 +52,7 @@ def register():
         return render_template("register.html")
     
     if request.method == "POST":
+
         username = request.form["username"]
         
         #check that username is valid in length
@@ -88,6 +89,8 @@ def newrecipe():
     }
 
     if request.method == "POST":
+        users.check_csrf()
+
         action = request.form.get("action")
 
         # add ingredient to session
@@ -165,12 +168,14 @@ def delete_recipe(recipe_id):
     if recipe.poster_name != users.user_name():
         return render_template("error.html", message="You can only delete recipes you have posted")
     
+    users.check_csrf()
     cooking.delete_recipe(recipe_id)
     flash("Recipe deleted!", "success")
     return redirect("/recipes")
 
 @app.route("/recipes/<int:recipe_id>/comment", methods=["POST"])
 def add_comment(recipe_id):
+    users.check_csrf()
     content = request.form["content"]
     poster_name = users.user_name()
     cooking.add_comment(recipe_id, content, poster_name)
@@ -183,6 +188,7 @@ def add_favorite(recipe_id):
         return render_template("error.html", message="You must be logged in to add a recipe to favorites")
     if cooking.check_if_favorite_exists(user_id, recipe_id):
         return render_template("error.html", message="This recipe is already in favorites")
+    users.check_csrf()
     cooking.add_favorite(user_id, recipe_id)
     flash("Recipe added to favorites!", "success")
     return redirect("/recipes")
@@ -199,6 +205,7 @@ def delete_favorite(recipe_id):
     user_id = users.user_id()
     if not user_id:
         return render_template("error.html", message="You must be logged in to delete a recipe from favorites")
+    users.check_csrf()
     cooking.delete_favorite(user_id, recipe_id)
     flash("Recipe deleted from favorites!", "success")
     return redirect("/favorites")
@@ -208,6 +215,7 @@ def rate_recipe(recipe_id):
     user_id = users.user_id()
     if not user_id:
         return render_template("error.html", message="You must be logged in to rate a recipe")
+    users.check_csrf()
     rating = request.form["rating"]
     if not 1 <= int(rating) <= 5:
         return render_template("error.html", message="Rating must be between 1 and 5")

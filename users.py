@@ -1,4 +1,5 @@
-from flask import redirect, render_template, request, session
+import os
+from flask import redirect, render_template, request, session, abort
 from os import getenv
 from werkzeug.security import check_password_hash, generate_password_hash
 from db import db
@@ -24,6 +25,7 @@ def login(name, password):
         return False
     session["user_id"] = user.id
     session["user_name"] = name
+    session["csrf_token"] = os.urandom(16).hex()
     return True
 
 def user_name():
@@ -35,3 +37,7 @@ def user_id():
 def logout():
     del session["user_id"]
     del session["user_name"]
+
+def check_csrf():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)

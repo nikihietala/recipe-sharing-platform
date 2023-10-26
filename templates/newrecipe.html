@@ -30,6 +30,7 @@
                 <br>
 
                 <input type="submit" name="action" value="Add recipe">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             </form>
         <br>
         <a href="/recipes">Go back to recipes</a>
