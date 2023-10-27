@@ -1,5 +1,5 @@
-from db import db
 from sqlalchemy import text
+from db import db
 
 
 def add_recipe(description, price, protein, carbs, fat, poster_name):

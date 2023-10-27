@@ -1,7 +1,5 @@
-from app import app
 from flask import render_template, redirect, request, session, flash
-from os import getenv
-from sqlalchemy.sql import text
+from app import app
 import users
 import cooking
 
@@ -12,7 +10,7 @@ def index():
 
 
 @app.route("/recipes")
-def recipes():
+def recipes_route():
     recipes_raw = cooking.get_recipes()
     recipes = []
     for recipe in recipes_raw:
@@ -140,7 +138,7 @@ def newrecipe():
                 username=users.user_name())
 
         # delete ingredient from session
-        elif 'ingredient_to_delete' in request.form:
+        if 'ingredient_to_delete' in request.form:
             ingredient_to_delete = request.form["ingredient_to_delete"]
             if 'ingredients' in session:
                 session['ingredients'] = [
@@ -152,7 +150,7 @@ def newrecipe():
                 form_data=form_data,
                 username=users.user_name())
 
-        elif action == "Add recipe":
+        if action == "Add recipe":
             description = request.form["description"]
             price = request.form["price"]
             rating = request.form["rating"]

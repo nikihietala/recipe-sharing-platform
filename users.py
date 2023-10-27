@@ -1,9 +1,8 @@
 import os
-from flask import redirect, render_template, request, session, abort
-from os import getenv
+from flask import request, session, abort
+from sqlalchemy.sql import text
 from werkzeug.security import check_password_hash, generate_password_hash
 from db import db
-from sqlalchemy.sql import text
 
 
 def register(name, password):
