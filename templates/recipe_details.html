@@ -5,7 +5,7 @@
     <h1>{{ recipe.description }}</h1>
     <div class="recipe-meta">
         <h5>Recipe by: {{ recipe.poster_name }}</h5>
-        <h5>Price: {{ recipe.price }} €</h5>
+        <h5>Price (per serving): {{ recipe.price }} €</h5>
     </div>
 
     <section class="recipe-details">
@@ -19,7 +19,7 @@
         </div>
 
         <div class="macros">
-            <h5>Macros per 1 portion:</h5>
+            <h5>Macros (per serving):</h5>
             <ul>
                 <li>Protein: {{ recipe.protein }} g</li>
                 <li>Carbs: {{ recipe.carbs }} g</li>

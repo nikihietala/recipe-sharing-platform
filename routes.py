@@ -90,18 +90,19 @@ def register():
             return render_template(
                 "error.html", message="Username already exists")
 
-    # after successful registration, redirect to login page
-    return redirect("/login")
+    # after successful registration, redirect to home page
+    flash("Registered successfully! You are now logged in", "success")
+    return redirect("/")
 
 
 @app.route("/newrecipe", methods=["GET", "POST"])
 def newrecipe():
     form_data = {
-        'description': request.form.get('description', ''),
-        'price': request.form.get('price', ''),
-        'protein': request.form.get('protein', ''),
-        'carbs': request.form.get('carbs', ''),
-        'fat': request.form.get('fat', ''),
+        'description': request.form.get('description', '').strip(),
+        'price': request.form.get('price', '').strip(),
+        'protein': request.form.get('protein', '').strip(),
+        'carbs': request.form.get('carbs', '').strip(),
+        'fat': request.form.get('fat', '').strip(),
     }
 
     if request.method == "POST":
@@ -113,28 +114,24 @@ def newrecipe():
         if action == "Add Ingredient":
             ingredient = request.form["ingredient"]
 
-            # Check if ingredient contains only letters and spaces
             if not ingredient.replace(' ', '').isalpha():
-                flash(
-                    'Only letters are allowed for ingredients. No numbers or special characters.',
-                    'error')
-                return render_template(
-                    "newrecipe.html",
-                    ingredients=session.get(
-                        'ingredients',
-                        []),
-                    form_data=form_data,
-                    username=users.user_name())
-            if ingredient:
-                if 'ingredients' not in session:
-                    session['ingredients'] = []
-                session['ingredients'].append(ingredient)
-                session.modified = True
-            return render_template(
-                "newrecipe.html",
-                ingredients=session['ingredients'],
-                form_data=form_data,
-                username=users.user_name())
+                flash('Only letters are allowed for ingredients. No numbers or special characters.', 'error')
+                return render_template("newrecipe.html",
+                                       ingredients=session.get('ingredients', []),
+                                       form_data=form_data,
+                                       username=users.user_name())
+            
+            if not ingredient:
+                return render_template("error.html")
+
+            if 'ingredients' not in session:
+                session['ingredients'] = []
+            session['ingredients'].append(ingredient)
+            session.modified = True
+            return render_template("newrecipe.html",
+                                   ingredients=session['ingredients'],
+                                   form_data=form_data,
+                                   username=users.user_name())
 
         # delete ingredient from session
         if 'ingredient_to_delete' in request.form:
@@ -143,18 +140,25 @@ def newrecipe():
                 session['ingredients'] = [
                     i for i in session['ingredients'] if i != ingredient_to_delete]
                 session.modified = True
-            return render_template(
-                "newrecipe.html",
-                ingredients=session['ingredients'],
-                form_data=form_data,
-                username=users.user_name())
+            return render_template("newrecipe.html",
+                                   ingredients=session['ingredients'],
+                                   form_data=form_data,
+                                   username=users.user_name())
 
         if action == "Add recipe":
-            description = request.form["description"]
-            price = request.form["price"]
-            protein = request.form["protein"]
-            carbs = request.form["carbs"]
-            fat = request.form["fat"]
+            # Do not allow empty fields for description, price, or ingredients
+            if not form_data['description'] or not form_data['price'] or not session.get('ingredients'):
+                return render_template("error.html", message="You must fill in all fields")
+
+            # Do not allow empty fields for nutrition
+            if not form_data['protein'] or not form_data['carbs'] or not form_data['fat']:
+                return render_template("error.html", message="You must fill in all fields")
+
+            description = form_data['description']
+            price = form_data['price']
+            protein = form_data['protein']
+            carbs = form_data['carbs']
+            fat = form_data['fat']
             poster_name = users.user_name()
             ingredients = session.get('ingredients', [])
 
@@ -164,27 +168,25 @@ def newrecipe():
 
             for ingredient_name in ingredients:
                 # check if ingredient exists in ingredients table
-                ingredient_id = cooking.check_if_ingredient_exists(
-                    ingredient_name)
+                ingredient_id = cooking.check_if_ingredient_exists(ingredient_name)
 
                 # if ingredient doesn't exist, add it to ingredients table
                 if ingredient_id is None:
                     ingredient_id = cooking.add_ingredient(ingredient_name)
 
-                cooking.add_recipe_ingredient_relationship(
-                    recipe_id, ingredient_id)
+                cooking.add_recipe_ingredient_relationship(recipe_id, ingredient_id)
 
             # clear ingredients session after recipe is submitted
             session.pop('ingredients', None)
-
+            flash("Recipe added!", "success")
             return redirect("/recipes")
 
     session.setdefault('ingredients', [])
-    return render_template(
-        "newrecipe.html",
-        ingredients=session['ingredients'],
-        form_data=form_data,
-        username=users.user_name())
+    return render_template("newrecipe.html",
+                           ingredients=session['ingredients'],
+                           form_data=form_data,
+                           username=users.user_name())
+
 
 
 @app.route("/recipes/<int:recipe_id>")
@@ -252,7 +254,7 @@ def add_favorite(recipe_id):
     users.check_csrf()
     cooking.add_favorite(user_id, recipe_id)
     flash("Recipe added to favorites!", "success")
-    return redirect("/recipes")
+    return redirect("/recipes/" + str(recipe_id))
 
 
 @app.route("/favorites")
