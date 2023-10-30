@@ -20,7 +20,7 @@ Mahdollinen kehitysidea olisi yhdistää sovellukseen jokin internetistä valmii
 **Huom:**
 Asentamisen ohjeet ovat hieman erilaisia riippuen käyttöjärjestelmästä (Linux/Windows/Mac). Seuraavat esimerkkiohjeet ovat Linuxille. Oletus on että käytössäsi on Python3 ja PostgreSQL.
 
-1. Lataa sovelluksen GitHub-repository
+1. Lataa sovelluksen GitHub-repository yhteen kansioon
 
 2. Luo .env tiedosto kyseiseen kansioon ja lisää sinne seuraavat tiedot:
 * DATABASE_URL=postgresql:///user
@@ -41,9 +41,9 @@ source venv/bin/activate
 pip install -r ./requirements.txt
 ```
 
-5. Luo tietokanta psql:ssä
+5. Käynnistä psql terminaalissa ja luo tietokanta. 
 ```bash
-psql < schema.sql
+\i schema.sql
 ```
 
 6. Käynnistä sovellus
