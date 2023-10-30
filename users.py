@@ -44,5 +44,7 @@ def logout():
 
 
 def check_csrf():
-    if session["csrf_token"] != request.form["csrf_token"]:
+    form_token = request.form.get("csrf_token")
+    session_token = session.get("csrf_token")
+    if not form_token or not session_token or session_token != form_token:
         abort(403)

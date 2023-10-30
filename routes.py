@@ -99,7 +99,6 @@ def newrecipe():
     form_data = {
         'description': request.form.get('description', ''),
         'price': request.form.get('price', ''),
-        'rating': request.form.get('rating', ''),
         'protein': request.form.get('protein', ''),
         'carbs': request.form.get('carbs', ''),
         'fat': request.form.get('fat', ''),
@@ -153,7 +152,6 @@ def newrecipe():
         if action == "Add recipe":
             description = request.form["description"]
             price = request.form["price"]
-            rating = request.form["rating"]
             protein = request.form["protein"]
             carbs = request.form["carbs"]
             fat = request.form["fat"]
@@ -162,7 +160,7 @@ def newrecipe():
 
             # store recipe in DB(recipes table)
             recipe_id = cooking.add_recipe(
-                description, price, rating, protein, carbs, fat, poster_name)
+                description, price, protein, carbs, fat, poster_name)
 
             for ingredient_name in ingredients:
                 # check if ingredient exists in ingredients table
